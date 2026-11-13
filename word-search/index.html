@@ -227,7 +227,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div id="panel-play" role="tabpanel" aria-labelledby="tab-play">
         <div class="playhead">
           <p class="progress"><b id="found-count">0</b> / <span id="total-count">8</span> words found</p>
-          <p class="timer" id="timer">0:00</p>
+          <div style="display:flex;gap:10px;align-items:center">
+            <p class="timer" id="timer">0:00</p>
+            <button class="btn btn-ghost" id="sound-toggle" aria-pressed="true" title="Sound on"
+              style="padding:8px 12px;font-size:14px">Sound on</button>
+          </div>
+        </div>
+        <div class="row" style="margin-top:0;margin-bottom:18px">
+          <div style="flex:2 1 260px">
+            <label for="play-words-input">Your words</label>
+            <textarea id="play-words-input" spellcheck="false" style="min-height:64px" aria-describedby="play-hint">LANTERN
+GARDEN
+RIVER
+PUZZLE
+COZY
+HARVEST
+MITTEN
+WINDOW</textarea>
+            <p class="hint" id="play-hint">Change the list, or pick a theme below, then press New puzzle.</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+              <button class="btn btn-ghost theme" data-theme="classroom" style="padding:7px 12px;font-size:13.5px">Classroom</button>
+              <button class="btn btn-ghost theme" data-theme="animals" style="padding:7px 12px;font-size:13.5px">Animals</button>
+              <button class="btn btn-ghost theme" data-theme="winter" style="padding:7px 12px;font-size:13.5px">Winter</button>
+              <button class="btn btn-ghost theme" data-theme="space" style="padding:7px 12px;font-size:13.5px">Space</button>
+            </div>
+          </div>
+          <div style="flex:1 1 150px">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty">
+              <option value="easy">Easy — no diagonals</option>
+              <option value="normal" selected>Normal — diagonals</option>
+              <option value="hard">Hard — diagonals + backwards</option>
+            </select>
+          </div>
         </div>
         <div class="playwrap">
           <div class="board" id="board" aria-label="Word search board"></div>
@@ -459,19 +491,48 @@ WINDOW</textarea>
   function stopTimer(){ if(timerId){ clearInterval(timerId); timerId = null; } }
   function resetTimer(){ stopTimer(); $("timer").textContent = "0:00"; startedAt = 0; }
 
+  var THEMES = {
+    classroom: ["HOMEWORK","PENCIL","TEACHER","LIBRARY","SPELLING","RECESS","NOTEBOOK","SCIENCE"],
+    animals:   ["TIGER","RABBIT","DOLPHIN","ELEPHANT","FALCON","OTTER","PANDA","TURTLE"],
+    winter:    ["SNOWFLAKE","MITTEN","SCARF","SLEDGE","FROST","CANDLE","SWEATER","FIREPLACE"],
+    space:     ["ORBIT","ROCKET","COMET","NEBULA","SATURN","GALAXY","ASTEROID","TELESCOPE"]
+  };
+  var soundOn = true, audioCtx = null;
+
+  function tone(freqs, dur){
+    if(!soundOn) return;
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var t0 = audioCtx.currentTime;
+      freqs.forEach(function(f, i){
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t0 + i*0.06);
+        g.gain.exponentialRampToValueAtTime(0.14, t0 + i*0.06 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + i*0.06 + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t0 + i*0.06); o.stop(t0 + i*0.06 + dur + 0.02);
+      });
+    }catch(e){}
+    if(navigator.vibrate) { try{ navigator.vibrate(12); }catch(e){} }
+  }
+
   function newGame(){
-    var words = parseWords($("words").value);
+    var words = parseWords($("play-words-input").value);
+    if(words.length < 2) words = parseWords($("words").value);
     if(words.length < 2) words = ["LANTERN","GARDEN","RIVER","PUZZLE","COZY","HARVEST","MITTEN","WINDOW"];
-    var diag = $("diag").checked, back = $("back").checked;
+    var diff = $("difficulty").value;
+    var diag = diff !== "easy", back = diff === "hard";
     var n = fitSize(words, diag);
     var res = build(words, n, diag, back);
     game = { n: n, grid: res.grid, placed: res.placed, found: {}, remaining: res.placed.map(function(p){ return p.word; }), started:false };
+    anchor = null; drag.active = false; drag.start = null; sel.cells = [];   // reset any pending selection
     resetTimer();
     $("winning").classList.remove("show");
     renderBoard();
     renderWordList();
     updateProgress();
-    track("ws_play_start", { word_count: words.length, grid: n, diagonals: diag ? "yes":"no", backwards: back ? "yes":"no" });
+    track("ws_play_start", { word_count: words.length, grid: n, difficulty: diff, diagonals: diag ? "yes":"no", backwards: back ? "yes":"no" });
   }
 
   function cellSize(){
@@ -527,6 +588,7 @@ WINDOW</textarea>
     $("win-text").textContent = "All " + game.placed.length + " words found in " +
       Math.floor(s/60) + ":" + String(s%60).padStart(2,"0") + ".";
     $("winning").classList.add("show");
+    tone([523, 659, 784, 1047], 0.22);
     track("ws_play_complete", { seconds: s, words: game.placed.length, grid: game.n });
   }
 
@@ -570,6 +632,7 @@ WINDOW</textarea>
       cells.forEach(function(p){ var el = cellAt(p[0],p[1]); if(el) el.classList.add("found"); });
       var li = $("play-words").querySelector('[data-word="' + hit + '"]');
       if(li) li.classList.add("done");
+      tone([660, 880], 0.16);
       updateProgress();
       track("ws_word_found", { word_length: hit.length, words_left: game.remaining.length });
     }
@@ -627,6 +690,23 @@ WINDOW</textarea>
     drag.active = false; drag.start = null; anchor = null; clearSel();
   });
   window.addEventListener("resize", function(){ if(game){ renderBoard(); } });
+
+  $("sound-toggle").addEventListener("click", function(){
+    soundOn = !soundOn;
+    this.textContent = soundOn ? "Sound on" : "Sound off";
+    this.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    if(soundOn) tone([880], 0.12);
+    track("ws_sound", { state: soundOn ? "on" : "off" });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".theme"), function(btn){
+    btn.addEventListener("click", function(){
+      var list = THEMES[btn.dataset.theme] || [];
+      $("play-words-input").value = list.join("\n");
+      newGame();
+      track("ws_theme", { theme: btn.dataset.theme });
+    });
+  });
+  $("difficulty").addEventListener("change", function(){ newGame(); });
 
   $("new-game").addEventListener("click", newGame);
   $("play-again").addEventListener("click", newGame);
