@@ -4,19 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Printable Word Search Generator — Free, No Sign-Up | Najura</title>
-<meta name="description" content="Make your own printable word search in seconds. Type your words, pick a size, print the puzzle and the answer key. Free, no sign-up, works offline.">
+<meta name="description" content="Make your own printable word search in seconds. Type your words, pick a size, print the puzzle and the answer key. Teacher mode makes a whole set of different puzzles from one word list. Free, no sign-up, works offline.">
 <link rel="canonical" href="https://app.najura.com/word-search/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#FBF5E9">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Printable Word Search Generator — Free, No Sign-Up">
+<meta property="og:description" content="Type your words, print the puzzle and answer key. Teacher mode builds a whole set of different puzzles from one word list.">
+<meta property="og:url" content="https://app.najura.com/word-search/">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NJWRCGHG');</script>
+<!-- End Google Tag Manager -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
  {"@type":"WebApplication","name":"Printable Word Search Generator","url":"https://app.najura.com/word-search/","applicationCategory":"EducationalApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Najura","url":"https://najura.com/"}},
  {"@type":"FAQPage","mainEntity":[
   {"@type":"Question","name":"Is this word search generator free?","acceptedAnswer":{"@type":"Answer","text":"Yes. The generator is free, needs no account and runs entirely in your browser. Nothing you type is uploaded."}},
-  {"@type":"Question","name":"Can I print the answer key?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every puzzle prints with a separate answer key page that shows where each word is placed."}},
-  {"@type":"Question","name":"How many words can I use?","acceptedAnswer":{"@type":"Answer","text":"Up to 30 words. The grid grows automatically so words fit, and words that cannot be placed are listed after generating."}}]}]}
+  {"@type":"Question","name":"Can I print the answer key?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every puzzle prints with a matching answer key that shows where each word is placed."}},
+  {"@type":"Question","name":"How do I make a different puzzle for each student?","acceptedAnswer":{"@type":"Answer","text":"Use Teacher mode: set the number of copies and the tool builds that many different layouts from the same word list, each with its own answer key."}}]}]}
 </script>
 <style>
   :root{
@@ -43,9 +54,9 @@
     border-radius:12px;font:inherit;font-size:16px;background:#FFFDF8;resize:vertical}
   textarea:focus,input:focus,select:focus{outline:2px solid var(--green);outline-offset:1px}
   .row{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px}
-  .row>div{flex:1 1 180px}
+  .row>div{flex:1 1 170px}
   select,input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);
-    border-radius:12px;font:inherit;font-size:15px;background:#FFFDF8}
+    border-radius:12px;font:inherit;font-size:15px;background:#FFFDF8;color:var(--ink)}
   .checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:15px}
   .checks label{display:flex;align-items:center;gap:8px;font-weight:600;margin:0}
   input[type=checkbox]{width:18px;height:18px;accent-color:var(--green)}
@@ -57,17 +68,17 @@
   .ghost:hover{border-color:var(--muted)}
   .status{margin-top:14px;font-size:14px;color:var(--muted);min-height:20px}
   .status.warn{color:#9A3412}
-  /* puzzle */
+  /* puzzle sheets */
   #output{margin-top:26px}
   .sheet{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:22px}
-  .sheet h2{font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  .sheet .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
     margin:0 0 4px;font-weight:700}
-  .sheet h3{margin:0 0 16px;font-size:24px}
-  .gridwrap{overflow-x:auto}
+  .sheet h2{margin:0 0 4px;font-size:24px}
+  .sheet .sub{margin:0 0 16px;color:var(--muted);font-size:15px}
+  .gridwrap{overflow-x:auto;padding-bottom:4px}
   .cells{display:grid;gap:0;margin:0 auto;width:max-content;font-family:ui-monospace,Menlo,monospace}
   .cells div{width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center;
-    font-size:calc(var(--cell) * .62);text-transform:uppercase;color:var(--ink)}
-  .cells.hide div{color:transparent}
+    font-size:calc(var(--cell) * .6);text-transform:uppercase;color:var(--ink)}
   .wordlist{display:flex;flex-wrap:wrap;gap:8px 18px;margin:18px 0 0;padding:0;list-style:none;
     font-size:15px;text-transform:uppercase;letter-spacing:.03em}
   .wordlist li{color:var(--muted);font-weight:600}
@@ -91,11 +102,13 @@
     .sheet{border:0;padding:0;margin:0 0 8mm;page-break-after:always;page-break-inside:avoid}
     .sheet:last-child{page-break-after:auto}
     .cells div{--cell:9mm;font-size:9mm;line-height:1}
-    .sheet h2{color:#444}
+    .sheet h2{color:#333}
   }
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NJWRCGHG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header><a class="brand" href="https://najura.com/"><span class="dot"></span> Najura</a></header>
 
 <main>
@@ -112,7 +125,7 @@ COZY
 HARVEST
 MITTEN
 WINDOW</textarea>
-    <p class="hint">One word per line, or separated by commas. Letters and spaces only — hyphens are removed. Up to 30 words.</p>
+    <p class="hint">One word per line, or separated by commas. Letters only — hyphens, spaces and accents are removed. Up to 30 words.</p>
 
     <div class="row">
       <div>
@@ -129,12 +142,24 @@ WINDOW</textarea>
         <label for="title">Puzzle title</label>
         <input id="title" type="text" value="Najura Word Search" maxlength="48">
       </div>
+      <div>
+        <label for="copies">Teacher mode — copies</label>
+        <select id="copies">
+          <option value="1" selected>1 puzzle</option>
+          <option value="2">2 different puzzles</option>
+          <option value="3">3 different puzzles</option>
+          <option value="5">5 different puzzles</option>
+          <option value="8">8 different puzzles</option>
+          <option value="10">10 different puzzles</option>
+        </select>
+      </div>
     </div>
 
     <div class="checks">
       <label><input type="checkbox" id="diag" checked> Diagonals</label>
       <label><input type="checkbox" id="back"> Backwards</label>
-      <label><input type="checkbox" id="key" checked> Include answer key</label>
+      <label><input type="checkbox" id="key" checked> Include answer keys</label>
+      <label><input type="checkbox" id="large"> Large print</label>
     </div>
 
     <div class="actions">
@@ -154,8 +179,13 @@ WINDOW</textarea>
       <li><strong>Generate, then print.</strong> The puzzle and its answer key are laid out for A4 with room for margins, so nothing gets cut off by the printer.</li>
     </ol>
 
+    <h2>Teacher mode: one word list, a whole class set</h2>
+    <p>Set the number of copies and the generator builds that many <em>different</em> puzzles from the same word list — same words, different layout, so the child in the next seat cannot simply copy the answers. Each puzzle is numbered (<em>Puzzle 1 of 5</em>) and each one has its own answer key, printed after the puzzles in the same order.</p>
+    <p>This is the part free generators usually skip: you either get one puzzle, or you get the same puzzle ten times. Printing a set for a class of thirty takes about a minute here.</p>
+
     <h2>What this generator does differently</h2>
-    <p>Most free generators bury the print button, add a watermark, or ask you to sign up before you can see the puzzle. This one is a single page that runs entirely offline in your browser: your words are never uploaded, there is no account, and the print stylesheet is built for real paper — black letters, generous margins, one puzzle per sheet, and an answer key that shows exactly where each word sits.</p>
+    <p>Most free generators bury the print button, add a watermark, or ask you to sign up before you can see the puzzle. This one is a single page that runs entirely offline in your browser: your words are never uploaded, there is no account, and the print stylesheet is built for real paper — black letters, generous margins, one puzzle per sheet, and answer keys that show exactly where each word sits.</p>
+    <p><strong>Large print</strong> switches to bigger letters and a tighter grid, which suits young children, classroom display copies and readers who need larger type.</p>
 
     <h3>Good words to use</h3>
     <ul>
@@ -172,6 +202,8 @@ WINDOW</textarea>
     <p>Yes. No account, no watermark, no limit on how many puzzles you make.</p>
     <h3>Do you store my words?</h3>
     <p>No. The page works without a network connection once it has loaded, and the words are only used in your browser's memory.</p>
+    <h3>How do I print a different puzzle for each student?</h3>
+    <p>Use Teacher mode and pick the number of copies. Each copy is a different layout of the same words, with its own answer key.</p>
     <h3>Can I use the puzzles commercially?</h3>
     <p>The puzzles you generate with your own words are yours — classrooms, parties, church bulletins, work newsletters. Please don't resell the generator itself.</p>
     <h3>Why are some of my words missing?</h3>
@@ -193,11 +225,17 @@ WINDOW</textarea>
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
   var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var state = { grid:null, placed:[], size:0, words:[] };
+  var state = { sheets: 0 };
+  window.dataLayer = window.dataLayer || [];
+
+  function track(event, data){
+    var payload = { event: event };
+    for(var k in data) payload[k] = data[k];
+    window.dataLayer.push(payload);
+  }
 
   function parseWords(raw){
-    var parts = raw.split(/[\n,;]+/);
-    var seen = {}, out = [];
+    var parts = raw.split(/[\n,;]+/), seen = {}, out = [];
     parts.forEach(function(p){
       var w = p.replace(/[^A-Za-z]/g, "").toUpperCase();
       if(!w) return;
@@ -209,8 +247,8 @@ WINDOW</textarea>
 
   function directions(diag, back){
     var d = [[0,1],[1,0]];
-    if(diag){ d.push([1,1],[1,-1]); }
-    if(back){ d.push([0,-1],[-1,0]); if(diag){ d.push([-1,-1],[-1,1]); } }
+    if(diag) d.push([1,1],[1,-1]);
+    if(back){ d.push([0,-1],[-1,0]); if(diag) d.push([-1,-1],[-1,1]); }
     return d;
   }
 
@@ -221,7 +259,7 @@ WINDOW</textarea>
   }
 
   function tryPlace(grid, word, dirs, n){
-    var attempts = 220;
+    var attempts = 260;
     while(attempts-- > 0){
       var d = dirs[Math.floor(Math.random()*dirs.length)];
       var r = Math.floor(Math.random()*n), c = Math.floor(Math.random()*n);
@@ -258,8 +296,10 @@ WINDOW</textarea>
     return Math.min(24, Math.max(8, n));
   }
 
-  function renderCells(grid, placed){
-    var n = grid.length, cellPx = n <= 10 ? 38 : n <= 14 ? 32 : n <= 18 ? 26 : 22;
+  function renderCells(grid, placed, large){
+    var n = grid.length, cellPx;
+    if(large) cellPx = n <= 10 ? 44 : n <= 14 ? 38 : n <= 18 ? 32 : 27;
+    else cellPx = n <= 10 ? 38 : n <= 14 ? 32 : n <= 18 ? 26 : 22;
     var wrap = document.createElement("div");
     wrap.className = "gridwrap";
     var box = document.createElement("div");
@@ -278,66 +318,86 @@ WINDOW</textarea>
     return wrap;
   }
 
+  function sheet(subtitle, title, grid, placed, large, extraClass){
+    var s = document.createElement("section");
+    s.className = "sheet" + (extraClass ? " " + extraClass : "");
+    var k = document.createElement("p"); k.className = "kicker"; k.textContent = subtitle || "";
+    var h = document.createElement("h2"); h.textContent = title;
+    s.appendChild(k); s.appendChild(h);
+    s.appendChild(renderCells(grid, placed, large));
+    return s;
+  }
+
   function generate(){
-    var raw = $("words").value;
-    var words = parseWords(raw);
+    var words = parseWords($("words").value);
     var status = $("status");
     if(words.length < 2){
       status.className = "status warn";
       status.textContent = "Add at least two words (letters only).";
       return;
     }
-    var diag = $("diag").checked, back = $("back").checked;
+    var diag = $("diag").checked, back = $("back").checked, large = $("large").checked;
+    var copies = parseInt($("copies").value, 10) || 1;
     var sizeSel = $("size").value;
     var n = sizeSel === "auto" ? fitSize(words, diag) : parseInt(sizeSel, 10);
-    var res = build(words, n, diag, back);
+    if(sizeSel !== "auto") n = Math.max(n, fitSize(words, diag));
 
-    // if a fixed size is too small, retry on a fitted size rather than silently dropping words
-    if(res.missed.length && sizeSel !== "auto"){
-      var bigger = Math.max(n, fitSize(words, diag));
-      if(bigger > n){ res = build(words, bigger, diag, back); n = bigger; }
+    var puzzles = [], missedAll = [], i;
+    for(i=0;i<copies;i++){
+      var res = build(words, n, diag, back);
+      puzzles.push(res);
+      res.missed.forEach(function(w){ if(missedAll.indexOf(w) === -1) missedAll.push(w); });
     }
 
-    state = { grid: res.grid, placed: res.placed, size: n, words: words };
     var out = $("output");
     out.innerHTML = "";
-
     var title = ($("title").value || "Word Search").trim();
-    var sheet = document.createElement("section");
-    sheet.className = "sheet";
-    var h2 = document.createElement("h2"); h2.textContent = title;
-    var h3 = document.createElement("h3"); h3.textContent = "Find " + res.placed.length + " words";
-    sheet.appendChild(h2); sheet.appendChild(h3);
-    sheet.appendChild(renderCells(res.grid, null));
-    var ul = document.createElement("ul"); ul.className = "wordlist";
-    res.placed.slice().sort(function(a,b){ return a.word.localeCompare(b.word); }).forEach(function(p){
-      var li = document.createElement("li"); li.textContent = p.word; ul.appendChild(li);
+
+    puzzles.forEach(function(res, idx){
+      var sub = copies > 1 ? "Puzzle " + (idx+1) + " of " + copies : "Find " + res.placed.length + " words";
+      var s = sheet(sub, title, res.grid, null, large);
+      var ul = document.createElement("ul"); ul.className = "wordlist";
+      res.placed.slice().sort(function(a,b){ return a.word.localeCompare(b.word); }).forEach(function(p){
+        var li = document.createElement("li"); li.textContent = p.word; ul.appendChild(li);
+      });
+      s.appendChild(ul);
+      out.appendChild(s);
     });
-    sheet.appendChild(ul);
-    out.appendChild(sheet);
 
     if($("key").checked){
-      var key = document.createElement("section");
-      key.className = "sheet answer";
-      var k2 = document.createElement("h2"); k2.textContent = "Answer key";
-      var k3 = document.createElement("h3"); k3.textContent = title;
-      key.appendChild(k2); key.appendChild(k3);
-      key.appendChild(renderCells(res.grid, res.placed));
-      var legend = document.createElement("p"); legend.className = "legend";
-      legend.textContent = "Highlighted cells mark where each word sits.";
-      key.appendChild(legend);
-      out.appendChild(key);
+      puzzles.forEach(function(res, idx){
+        var sub = copies > 1 ? "Answer key — puzzle " + (idx+1) + " of " + copies : "Answer key";
+        var s = sheet(sub, title, res.grid, res.placed, large, "answer");
+        var legend = document.createElement("p"); legend.className = "legend";
+        legend.textContent = "Highlighted cells mark where each word sits.";
+        s.appendChild(legend);
+        out.appendChild(s);
+      });
     }
 
-    var msg = "Puzzle built: " + n + " × " + n + " grid, " + res.placed.length + " words placed.";
-    if(res.missed.length) msg += " Could not fit: " + res.missed.join(", ") + " — try a larger grid.";
-    status.className = res.missed.length ? "status warn" : "status";
+    state.sheets = puzzles.length + ($("key").checked ? puzzles.length : 0);
+    var msg = copies > 1
+      ? "Built " + copies + " different puzzles (" + n + " × " + n + ", " + puzzles[0].placed.length + " words each)."
+      : "Puzzle built: " + n + " × " + n + " grid, " + puzzles[0].placed.length + " words placed.";
+    if(missedAll.length) msg += " Could not fit: " + missedAll.join(", ") + " — try a larger grid.";
+    status.className = missedAll.length ? "status warn" : "status";
     status.textContent = msg;
+
+    track("ws_generate", {
+      word_count: words.length,
+      grid: n,
+      puzzles: copies,
+      answer_keys: $("key").checked ? "yes" : "no",
+      large_print: large ? "yes" : "no",
+      diagonals: diag ? "yes" : "no",
+      backwards: back ? "yes" : "no"
+    });
   }
 
   $("gen").addEventListener("click", generate);
   $("print").addEventListener("click", function(){
-    if(!state.placed.length) generate();
+    if(!state.sheets) generate();
+    track("ws_print", { sheets: state.sheets });
     window.print();
   });
   $("words").addEventListener("keydown", function(e){
