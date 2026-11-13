@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/najura.css">
 <meta name="theme-color" content="#FAF6EC">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Word Search — Play Online or Print Free">
@@ -30,160 +31,132 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   {"@type":"Question","name":"How do I make a different puzzle for each student?","acceptedAnswer":{"@type":"Answer","text":"Use Teacher mode in the Print tab: choose the number of copies and the tool builds that many different layouts from the same word list, each with its own answer key."}}]}]}
 </script>
 <style>
-  :root{
-    --cream:#FAF6EC; --paper:#FFFFFF; --ink:#17251F; --ink-soft:#3A4A43;
-    --muted:#6A7A72; --green:#22593F; --green-deep:#16412C; --gold:#C9A227;
-    --line:#E7DFCC; --line-strong:#D8CDB4; --good:#2F7A55;
-    --shadow:0 1px 2px rgba(23,37,31,.05), 0 18px 40px -24px rgba(23,37,31,.35);
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:
-      radial-gradient(1200px 500px at 50% -220px, #FFFDF6 0%, rgba(255,253,246,0) 70%), var(--cream);
-    color:var(--ink);font-family:Nunito,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
-    line-height:1.65;-webkit-font-smoothing:antialiased}
-  a{color:var(--green-deep)}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
 
-  /* top bar */
-  .topbar{border-bottom:1px solid var(--line)}
-  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:10px;font-family:Fredoka,system-ui,sans-serif;
-    font-weight:600;font-size:19px;letter-spacing:.2px;text-decoration:none;color:var(--ink)}
-  .brand i{width:11px;height:11px;border-radius:50%;background:var(--gold);display:block;
-    box-shadow:0 0 0 4px rgba(201,162,39,.14)}
-  .topnav{display:flex;gap:22px;font-size:14.5px;font-weight:700}
-  .topnav a{text-decoration:none;color:var(--muted)}
-  .topnav a:hover{color:var(--ink)}
-
-  /* hero */
-  .hero{padding:56px 0 8px;text-align:center}
+  /* ---------- tool page (brand dark theme, reuses najura.css) ---------- */
+  body{background:var(--bg);color:var(--text)}
+  .glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .glow::before,.glow::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);opacity:.5}
+  .glow::before{width:900px;height:900px;top:-430px;left:-220px;background:radial-gradient(circle,#6A3DF0,transparent 65%)}
+  .glow::after{width:820px;height:820px;bottom:-430px;right:-260px;background:radial-gradient(circle,#1FB6A6,transparent 65%);opacity:.32}
+  main{position:relative;z-index:1}
+  .hero{padding:64px 0 10px;text-align:center}
   .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:800;
-    letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-  .eyebrow::before,.eyebrow::after{content:"";width:26px;height:1px;background:var(--line-strong)}
-  h1{font-family:Fredoka,system-ui,sans-serif;font-weight:600;letter-spacing:-1px;
-    font-size:clamp(34px,5.2vw,56px);line-height:1.08;margin:16px 0 14px}
-  .lede{font-size:clamp(16px,1.9vw,19px);color:var(--ink-soft);max-width:60ch;margin:0 auto}
+    letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim)}
+  .eyebrow::before,.eyebrow::after{content:"";width:26px;height:1px;background:var(--line)}
+  .hero h1{font-size:clamp(34px,5.2vw,58px);margin:16px 0 14px;color:var(--text)}
+  .lede{font-size:clamp(16px,1.9vw,19px);color:var(--text-dim);max-width:60ch;margin:0 auto}
   .trust{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:22px 0 0;padding:0;list-style:none;
-    font-size:13.5px;font-weight:700;color:var(--muted)}
-  .trust li{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.7);
+    font-size:13.5px;font-weight:700;color:var(--text-dim)}
+  .trust li{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);
     border-radius:999px;padding:6px 13px}
-  .trust li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--good)}
+  .trust li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal)}
 
-  /* card */
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     padding:26px;margin:34px 0 0}
-  .tabs{display:inline-flex;padding:5px;gap:4px;background:#F4EEE0;border-radius:14px;margin:0 auto 22px;
-    border:1px solid var(--line)}
-  .tab{appearance:none;border:0;background:transparent;font:inherit;font-weight:800;font-size:14.5px;
-    color:var(--muted);padding:10px 20px;border-radius:10px;cursor:pointer;letter-spacing:.01em}
-  .tab[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(23,37,31,.14)}
   .tabsrow{text-align:center}
-
+  .tabs{display:inline-flex;padding:5px;gap:4px;background:rgba(255,255,255,.05);border-radius:14px;
+    margin:0 auto 22px;border:1px solid var(--line)}
+  .tab{appearance:none;border:0;background:transparent;font:inherit;font-weight:800;font-size:14.5px;
+    color:var(--text-dim);padding:10px 20px;border-radius:10px;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--surface-2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.35)}
   label{display:block;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
-    color:var(--muted);margin:0 0 7px}
-  textarea{width:100%;min-height:92px;padding:13px 15px;border:1px solid var(--line);border-radius:14px;
-    font:inherit;font-size:16px;background:#FFFDF7;resize:vertical;color:var(--ink)}
-  textarea::placeholder{color:#A8B3AC}
-  textarea:focus,input:focus,select:focus{outline:2px solid var(--green);outline-offset:1px;border-color:transparent}
-  .hint{font-size:13px;color:var(--muted);margin:7px 0 0}
+    color:var(--text-dim);margin:0 0 7px}
+  textarea,select,input[type=text]{background:rgba(255,255,255,.05);border:1px solid var(--line);
+    color:var(--text);border-radius:14px}
+  textarea{width:100%;min-height:92px;padding:13px 15px;font:inherit;font-size:16px;resize:vertical}
+  select,input[type=text]{width:100%;padding:11px 13px;font:inherit;font-size:15px}
+  textarea::placeholder{color:#8F88BD}
+  textarea:focus,select:focus,input:focus{outline:2px solid var(--gold);outline-offset:1px}
+  .hint{font-size:13px;color:var(--text-dim);margin:7px 0 0}
   .row{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}
   .row>div{flex:1 1 170px}
-  select,input[type=text]{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:12px;
-    font:inherit;font-size:15px;background:#FFFDF7;color:var(--ink)}
   .checks{display:flex;gap:10px 20px;flex-wrap:wrap;margin-top:18px}
   .checks label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;margin:0;
-    text-transform:none;letter-spacing:0;color:var(--ink-soft)}
-  input[type=checkbox]{width:17px;height:17px;accent-color:var(--green)}
+    text-transform:none;letter-spacing:0;color:var(--text)}
+  input[type=checkbox]{width:17px;height:17px;accent-color:var(--gold)}
   .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
   button{font:inherit}
   .btn{appearance:none;border:0;border-radius:13px;padding:13px 22px;font-weight:800;font-size:15px;
-    cursor:pointer;letter-spacing:.01em;transition:transform .06s ease,background .15s ease}
+    cursor:pointer;transition:transform .06s ease,background .15s ease}
   .btn:active{transform:translateY(1px)}
-  .btn-primary{background:linear-gradient(180deg,#2A6A4B 0%,#22593F 100%);color:#fff;
-    box-shadow:0 1px 2px rgba(23,37,31,.18), inset 0 1px 0 rgba(255,255,255,.14)}
-  .btn-primary:hover{background:linear-gradient(180deg,#2F7653 0%,#1F5138 100%)}
-  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line-strong)}
-  .btn-ghost:hover{border-color:var(--muted);background:#FFFDF7}
-  .status{margin-top:14px;font-size:14px;color:var(--muted);min-height:20px}
-  .status.warn{color:#8A3B12}
+  .btn-primary{background:linear-gradient(180deg,#FFF0B3,var(--gold) 55%,var(--gold-deep));color:#3B2A05;
+    box-shadow:0 10px 24px -12px rgba(242,158,31,.8), inset 0 1px 0 rgba(255,255,255,.5)}
+  .btn-primary:hover{filter:brightness(1.05)}
+  .btn-ghost{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--line)}
+  .btn-ghost:hover{background:rgba(255,255,255,.13)}
+  .status{margin-top:14px;font-size:14px;color:var(--text-dim);min-height:20px}
+  .status.warn{color:#FFC8A8}
 
-  /* play */
   .playhead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-  .progress{font-weight:800;font-size:14px;color:var(--muted);letter-spacing:.03em}
-  .progress b{color:var(--ink);font-size:16px}
-  .timer{font-variant-numeric:tabular-nums;font-weight:800;color:var(--ink);font-size:16px;
-    background:#F4EEE0;border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+  .progress{font-weight:800;font-size:14px;color:var(--text-dim);letter-spacing:.03em}
+  .progress b{color:var(--gold);font-size:16px}
+  .timer{font-variant-numeric:tabular-nums;font-weight:800;color:var(--text);font-size:16px;
+    background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
   .playwrap{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:26px;align-items:start}
   .board{display:grid;gap:2px;margin:0 auto;width:max-content;touch-action:none;user-select:none;
-    -webkit-user-select:none;padding:8px;border-radius:16px;background:#FCFAF3;border:1px solid var(--line)}
+    -webkit-user-select:none;padding:8px;border-radius:18px;background:rgba(255,255,255,.04);
+    border:1px solid var(--line)}
   .cell{width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center;
-    font-family:ui-monospace,Menlo,monospace;font-size:calc(var(--cell) * .52);font-weight:600;
-    color:var(--ink);border-radius:6px;cursor:pointer;transition:background .08s ease,color .08s ease}
-  .cell:hover{background:#F1EAD9}
-  .cell.sel{background:#22593F;color:#fff}
-  .cell.found{background:#D9EFE1;color:#1C5138}
-  .cell.found.sel{background:#22593F;color:#fff}
-  @keyframes hintpulse{0%,100%{background:#F7E7B8}50%{background:#F2D98E}}
+    font-family:ui-monospace,Menlo,monospace;font-size:calc(var(--cell) * .52);font-weight:700;
+    color:var(--text);border-radius:6px;cursor:pointer;transition:background .08s ease,color .08s ease}
+  .cell:hover{background:rgba(255,255,255,.1)}
+  .cell.sel{background:linear-gradient(180deg,#FFF0B3,var(--gold) 60%,var(--gold-deep));color:#33240A}
+  .cell.found{background:rgba(60,224,192,.18);color:#9BF2E0}
+  .cell.found.sel{background:linear-gradient(180deg,#FFF0B3,var(--gold) 60%,var(--gold-deep));color:#33240A}
+  @keyframes hintpulse{0%,100%{background:rgba(255,201,60,.15)}50%{background:rgba(255,201,60,.45)}}
   .cell.hintword{animation:hintpulse .9s ease 1}
-  .words{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;max-height:none}
+  .words{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
   .words li{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font-weight:700;
-    font-size:14.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
-  .words li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--line-strong);flex:none}
-  .words li.done{color:#9FAEA6;text-decoration:line-through}
-  .words li.done::before{background:var(--good)}
-  .winning{display:none;margin-top:18px;border:1px solid #CFE7D9;background:#F1FAF4;border-radius:16px;padding:16px 18px}
+    font-size:14.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--text)}
+  .words li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--line);flex:none}
+  .words li.done{color:#7C74A8;text-decoration:line-through}
+  .words li.done::before{background:var(--teal)}
+  .winning{display:none;margin-top:18px;border:1px solid rgba(60,224,192,.35);background:rgba(60,224,192,.1);
+    border-radius:16px;padding:16px 18px}
   .winning.show{display:block}
-  .winning h3{font-family:Fredoka,system-ui,sans-serif;margin:0 0 4px;font-size:20px}
-  .winning p{margin:0;color:var(--ink-soft);font-size:14.5px}
+  .winning h3{font-size:20px;margin:0 0 4px;color:var(--text)}
+  .winning p{margin:0;color:var(--text-dim);font-size:14.5px}
 
-  /* sheets */
+  /* printable sheets stay paper-white, they read as paper on the dark page */
   #output{margin-top:26px}
-  .sheet{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px;margin-bottom:20px;
-    box-shadow:0 1px 2px rgba(23,37,31,.04)}
-  .sheet .kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  .sheet{background:#FDFBF4;color:#1B2530;border:1px solid rgba(255,255,255,.16);border-radius:18px;
+    padding:26px;margin-bottom:20px;box-shadow:0 20px 40px -24px rgba(0,0,0,.7)}
+  .sheet .kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#6A7A72;
     margin:0 0 5px;font-weight:800}
-  .sheet h2{font-family:Fredoka,system-ui,sans-serif;margin:0 0 14px;font-size:23px;font-weight:600}
+  .sheet h2{color:#17251F;margin:0 0 14px;font-size:23px}
   .puzzle{display:grid;gap:0;margin:0 auto;width:max-content;font-family:ui-monospace,Menlo,monospace}
   .puzzle div{width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center;
-    font-size:calc(var(--cell) * .6);text-transform:uppercase;color:var(--ink)}
-  .puzzle div.hit{background:#CBE8D6;border-radius:4px;font-weight:700;color:#1C5138}
+    font-size:calc(var(--cell) * .6);text-transform:uppercase;color:#1B2530}
+  .puzzle div.hit{background:#CBE8D6;border-radius:4px;font-weight:700;color:#17453A}
   .wordlist{display:flex;flex-wrap:wrap;gap:7px 18px;margin:18px 0 0;padding:0;list-style:none;
     font-size:14.5px;text-transform:uppercase;letter-spacing:.03em}
-  .wordlist li{color:var(--ink-soft);font-weight:700}
-  .legend{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+  .wordlist li{color:#33413C;font-weight:700}
+  .legend{font-size:12.5px;color:#5E6F67;margin:10px 0 0}
 
-  /* editorial */
-  article{max-width:68ch;margin:56px auto 0}
-  article h2{font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:26px;margin:36px 0 10px;
-    letter-spacing:-.3px}
-  article h3{font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:18px;margin:22px 0 6px}
-  article p,article li{color:var(--ink-soft)}
-  article ul,article ol{padding-left:22px}
+  .prose{max-width:68ch;margin:52px auto 0}
   .rule{height:1px;background:var(--line);border:0;margin:44px auto 0;max-width:68ch}
-
-  footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0 40px;font-size:13.5px;color:var(--muted)}
-  footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-  footer a{text-decoration:none;color:var(--muted);margin-right:16px;font-weight:700}
-  footer a:hover{color:var(--ink)}
+  footer{margin-top:56px}
 
   @media (max-width:820px){
     .playwrap{grid-template-columns:1fr}
     .words{flex-direction:row;flex-wrap:wrap;gap:6px 14px}
     .words li{padding:4px 8px}
-    .card{padding:18px;border-radius:18px}
-    .hero{padding:38px 0 4px}
+    .card{padding:18px;border-radius:22px}
+    .hero{padding:40px 0 4px}
   }
   @media print{
     body{background:#fff}
     body>*:not(main){display:none!important}
     main>*:not(#output){display:none!important}
-    .wrap{padding:0;max-width:none}
-    #output{margin:0;display:block!important}
-    .sheet{border:0;box-shadow:none;padding:0;margin:0 0 8mm;page-break-after:always;page-break-inside:avoid}
+    .wrap{padding:0;max-width:none;width:auto}
+    #output{margin:0}
+    .sheet{background:#fff;border:0;box-shadow:none;padding:0;margin:0 0 8mm;page-break-after:always;
+      page-break-inside:avoid;color:#111}
     .sheet:last-child{page-break-after:auto}
-    .puzzle div{--cell:9mm;font-size:9mm;line-height:1}
-    .sheet h2{color:#333}
+    .puzzle div{--cell:9mm;font-size:9mm;line-height:1;color:#111}
+    .puzzle div.hit{background:#DCEFE4}
+    .sheet h2{color:#222}
   }
 </style>
 </head>
@@ -191,16 +164,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NJWRCGHG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<div class="topbar">
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav">
   <div class="wrap">
-    <a class="brand" href="https://najura.com/"><i></i> Najura</a>
-    <nav class="topnav">
+    <a class="brand" href="https://najura.com/" aria-label="Najura home">
+      <span class="mark" aria-hidden="true">
+        <span class="gem g-red"></span><span class="gem g-yellow"></span>
+        <span class="gem g-cyan"></span><span class="gem g-purple"></span>
+      </span>
+      Najura <span style="color:var(--text-dim)">Tools</span>
+    </a>
+    <nav aria-label="Main">
       <a href="https://games.najura.com/">Games</a>
       <a href="https://blog.najura.com/">Blog</a>
-      <a href="https://najura.com/">Studio</a>
+      <a class="btn" href="https://najura.com/">Najura</a>
     </nav>
   </div>
-</div>
+</header>
 
 <main>
   <div class="wrap">
@@ -245,11 +226,9 @@ HARVEST
 MITTEN
 WINDOW</textarea>
             <p class="hint" id="play-hint">Change the list, or pick a theme below, then press New puzzle.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-              <button class="btn btn-ghost theme" data-theme="classroom" style="padding:7px 12px;font-size:13.5px">Classroom</button>
-              <button class="btn btn-ghost theme" data-theme="animals" style="padding:7px 12px;font-size:13.5px">Animals</button>
-              <button class="btn btn-ghost theme" data-theme="winter" style="padding:7px 12px;font-size:13.5px">Winter</button>
-              <button class="btn btn-ghost theme" data-theme="space" style="padding:7px 12px;font-size:13.5px">Space</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px" id="theme-chips">
+              <button class="btn btn-primary theme" data-theme="random" id="random-words"
+                style="padding:7px 14px;font-size:13.5px">🎲 Random words</button>
             </div>
           </div>
           <div style="flex:1 1 150px">
@@ -343,7 +322,7 @@ WINDOW</textarea>
 
     <hr class="rule">
 
-    <article>
+    <article class="prose">
       <h2>Play it, or print it</h2>
       <p>Most word search sites make you choose: a fiddly online game, or a printable sheet behind a sign-up form. This one does both from the same word list. Play the puzzle in the Play tab, and when you want paper, the Print tab builds a clean A4 sheet with a matching answer key.</p>
 
@@ -381,16 +360,24 @@ WINDOW</textarea>
 
 <footer>
   <div class="wrap">
-    <div>
-      <a href="https://najura.com/">Najura</a>
+    <a class="brand" href="https://najura.com/">
+      <span class="mark" aria-hidden="true">
+        <span class="gem g-red"></span><span class="gem g-yellow"></span>
+        <span class="gem g-cyan"></span><span class="gem g-purple"></span>
+      </span>
+      Najura
+    </a>
+    <div class="links">
+      <a href="https://najura.com/">najura.com</a>
       <a href="https://games.najura.com/">Games</a>
       <a href="https://blog.najura.com/">Blog</a>
-      <a href="https://najura.com/brickwise/privacy-policy.html">Privacy</a>
-      <a href="mailto:info@najura.com">Contact</a>
+      <a href="https://najura.com/brickwise-privacy/privacy-policy.html">Privacy</a>
+      <a href="mailto:info@najura.com">Support: info@najura.com</a>
     </div>
-    <p style="margin:0">Small games and tools that respect your time.</p>
+    <small>&copy; <span id="year">2026</span> Najura, a brand of Najuvia LLC.</small>
   </div>
 </footer>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
 
 <script>
 (function(){
@@ -493,11 +480,39 @@ WINDOW</textarea>
   function resetTimer(){ stopTimer(); $("timer").textContent = "0:00"; startedAt = 0; }
 
   var THEMES = {
-    classroom: ["HOMEWORK","PENCIL","TEACHER","LIBRARY","SPELLING","RECESS","NOTEBOOK","SCIENCE"],
-    animals:   ["TIGER","RABBIT","DOLPHIN","ELEPHANT","FALCON","OTTER","PANDA","TURTLE"],
-    winter:    ["SNOWFLAKE","MITTEN","SCARF","SLEDGE","FROST","CANDLE","SWEATER","FIREPLACE"],
-    space:     ["ORBIT","ROCKET","COMET","NEBULA","SATURN","GALAXY","ASTEROID","TELESCOPE"]
+    classroom: { label: "Classroom", words: ["HOMEWORK","PENCIL","TEACHER","LIBRARY","SPELLING","RECESS","NOTEBOOK","SCIENCE","ERASER","RULER","LESSON","CRAYON"] },
+    animals:   { label: "Animals",   words: ["TIGER","RABBIT","DOLPHIN","ELEPHANT","FALCON","OTTER","PANDA","TURTLE","MONKEY","ZEBRA","BEAVER","LIZARD"] },
+    winter:    { label: "Winter",    words: ["SNOWFLAKE","MITTEN","SCARF","SLEDGE","FROST","CANDLE","SWEATER","FIREPLACE","ICICLE","BLIZZARD","COCOA","PENGUIN"] },
+    space:     { label: "Space",     words: ["ORBIT","ROCKET","COMET","NEBULA","SATURN","GALAXY","ASTEROID","TELESCOPE","CRATER","LAUNCH","METEOR","MOON"] },
+    fruits:    { label: "Fruits",    words: ["APPLE","BANANA","CHERRY","MANGO","PAPAYA","GRAPES","LEMON","PEACH","PLUM","MELON","ORANGE","GUAVA"] },
+    sports:    { label: "Sports",    words: ["SOCCER","TENNIS","CRICKET","HOCKEY","RUGBY","BOXING","SWIMMING","RUNNING","CYCLING","SKIING","ROWING","DIVING"] },
+    ocean:     { label: "Ocean",     words: ["CORAL","OCTOPUS","SEAWEED","LAGOON","TIDE","WHALE","PEARL","HARBOUR","WAVE","REEF","SHELL","ANCHOR"] },
+    food:      { label: "Food",      words: ["BREAD","CHEESE","HONEY","PEPPER","NOODLE","BUTTER","YOGURT","GARLIC","TOMATO","OMELET","COOKIE","SALAD"] },
+    colors:    { label: "Colors",    words: ["CRIMSON","INDIGO","VIOLET","AMBER","SCARLET","OLIVE","TEAL","MAGENTA","IVORY","MAROON","GOLD","COPPER"] },
+    body:      { label: "Body",      words: ["ELBOW","SHOULDER","KNEE","ANKLE","FINGER","WRIST","MUSCLE","HEART","SPINE","THUMB","CHEEK","TOOTH"] }
   };
+
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function wordsForTheme(key, count){
+    var w = (THEMES[key] && THEMES[key].words) ? THEMES[key].words.slice() : [];
+    shuffle(w);
+    return w.slice(0, count || 8);
+  }
+  function renderThemeChips(){
+    var box = $("theme-chips");
+    Object.keys(THEMES).forEach(function(key){
+      var b = document.createElement("button");
+      b.className = "btn btn-ghost theme";
+      b.dataset.theme = key;
+      b.style.padding = "7px 12px";
+      b.style.fontSize = "13.5px";
+      b.textContent = THEMES[key].label;
+      box.appendChild(b);
+    });
+  }
   var soundOn = true, audioCtx = null;
 
   function tone(freqs, dur){
@@ -699,13 +714,24 @@ WINDOW</textarea>
     if(soundOn) tone([880], 0.12);
     track("ws_sound", { state: soundOn ? "on" : "off" });
   });
-  Array.prototype.forEach.call(document.querySelectorAll(".theme"), function(btn){
-    btn.addEventListener("click", function(){
-      var list = THEMES[btn.dataset.theme] || [];
-      $("play-words-input").value = list.join("\n");
-      newGame();
-      track("ws_theme", { theme: btn.dataset.theme });
-    });
+  function useTheme(key){
+    var isRandom = key === "random";
+    var pick = key;
+    if(isRandom){
+      var keys = Object.keys(THEMES);
+      pick = keys[Math.floor(Math.random()*keys.length)];
+    }
+    var count = isRandom ? 6 + Math.floor(Math.random()*5) : 8;   // 6-10 words
+    var list = wordsForTheme(pick, count);
+    $("play-words-input").value = list.join("\n");
+    newGame();
+    track("ws_theme", { theme: isRandom ? "random:" + pick : pick, word_count: list.length });
+  }
+  renderThemeChips();
+  $("theme-chips").addEventListener("click", function(e){
+    var btn = e.target.closest ? e.target.closest(".theme") : null;
+    if(!btn || !btn.dataset.theme) return;
+    useTheme(btn.dataset.theme);
   });
   $("difficulty").addEventListener("change", function(){ newGame(); });
 
